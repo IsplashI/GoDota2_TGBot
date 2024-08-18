@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 
 
@@ -94,15 +93,34 @@ namespace GoDota2_Bot
 
         private static async Task Start_Command(ITelegramBotClient client, Update update)
         {
-            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Welcome to my godota2 bot!!!\nYour chatId: {update.Message?.Chat.Id}\n", replyMarkup: ReplyMarkups.GetDefaultButtons());
+            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Welcome to my godota2 bot!!!\nYour chatId: ||{update.Message?.Chat.Id}||\n", replyMarkup: ReplyMarkups.GetDefaultButtons());
         }
         
         private static async Task ShowInfo_Command(ITelegramBotClient client, Update update)
-        {
-            show1 = true;
-            MainLogic.CallSendInfo();
-            show1 = false;
-            await Task.CompletedTask;
+        {                       
+            bool onBet = false;
+
+            if (MainLogic.bettingGreen || MainLogic.bettingRed || MainLogic.bettingBlack)
+            {
+                onBet = true;
+            }
+
+
+            string message1 = $"Round: {MainLogic.round}\n" +
+                $"Balance: {MainLogic.balance}\n" +
+                $"Current color: {MainLogic.currentColor}\n" +
+                $"Bet: {onBet}\n" +
+                $"\n" +
+                $"Red {MainLogic.notRed}/{MainLogic.redLimit}\n" +
+                $"Black {MainLogic.notBlack}/{MainLogic.blackLimit}\n" +
+                $"Green {MainLogic.notGreen}/{MainLogic.greenLimit}\n" +
+                $"\n" +
+                $"Red count:   {MainLogic.redProbab}   {MainLogic.redCount}\n" +
+                $"Black count: {MainLogic.blackProbab}   {MainLogic.blackCount}\n" +
+                $"Green count {MainLogic.greenProbab}   {MainLogic.greenCount}";
+
+
+            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, message1);
         }
         private static async Task Balance_Command(ITelegramBotClient client, Update update)
         {

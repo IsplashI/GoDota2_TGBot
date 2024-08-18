@@ -2,7 +2,7 @@
 using Telegram.Bot;
 using GoDota2_Bot;
 
-namespace Test_111_multi___TG_Bot_Run
+namespace GoDota2_Bot
 {
     internal class UserInput
     {

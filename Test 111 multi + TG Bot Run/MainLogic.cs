@@ -113,8 +113,7 @@ namespace GoDota2_Bot
 
             Start();
             BetCheck();
-            CheckStrike();
-            CallSendInfo();
+            CheckStrike();            
 
             Console.WriteLine("balance:" + balance);
         }
@@ -498,13 +497,6 @@ namespace GoDota2_Bot
                                          (int)(pixel & 0x0000FF00) >> 8,
                                          (int)(pixel & 0x00FF0000) >> 16);
             return color;
-        }
-        
-        public static void CallSendInfo()
-        {
-            BotConfiguration botConfiguration = new BotConfiguration();
-            var HostInstance = new Host(botConfiguration.botToken);            
-            HostInstance.SendInfo().Wait();        
         }
     }
 }
