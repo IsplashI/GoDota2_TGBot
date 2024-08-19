@@ -4,6 +4,7 @@ using System.Drawing;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using System.IO;
+using Telegram.Bot.Types.ReplyMarkups;
 
 
 
@@ -110,7 +111,7 @@ namespace GoDota2_Bot
 
 
             string message1 = $"Round: {MainLogic.round}\n" +
-                $"Balance: {MainLogic.balance}\n" +
+                $"Balance: {MainLogic.currentBalance}\n" +
                 $"Current color: {MainLogic.currentColor}\n" +
                 $"Bet: {onBet}\n" +
                 $"\n" +
@@ -127,14 +128,14 @@ namespace GoDota2_Bot
         }
         private static async Task Balance_Command(ITelegramBotClient client, Update update)
         {
-            int currentBalance = MainLogic.balance;
+            int currentBalance = MainLogic.currentBalance;
             await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, "Balance: " + currentBalance);
         }
         private static async Task ChangeBalance_Command(ITelegramBotClient client, Update update)
         {
-            int currentBalance = MainLogic.balance;
+            int currentBalance = MainLogic.currentBalance;
             await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId,
-                "Current balance: " + currentBalance + "\nNew balance:");
+                "Current balance: " + currentBalance + "\nNew balance:", replyMarkup: new ReplyKeyboardRemove());
             waitingBalance = true;
         }
 

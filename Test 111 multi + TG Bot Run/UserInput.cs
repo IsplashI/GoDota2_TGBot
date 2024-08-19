@@ -20,12 +20,13 @@ namespace GoDota2_Bot
                 string messageText = update.Message?.Text ?? "not text";
                 if (int.TryParse(messageText, out int balance) && balance > 0)
                 {
-                    MainLogic.balance = balance;
-                    await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Succes!\nBalance:{balance}");
+                    MainLogic.currentBalance = balance;
+                    MainLogic.startBalance = balance;
+                    await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Succes!\nBalance:{balance}", replyMarkup: ReplyMarkups.GetDefaultButtons());
                 }
                 else
                 {
-                    await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Error!");
+                    await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Error!", replyMarkup: ReplyMarkups.GetDefaultButtons());
                 }
                 BotLogic.waitingBalance = false;
             }

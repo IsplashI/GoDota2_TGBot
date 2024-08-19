@@ -101,10 +101,12 @@ namespace GoDota2_Bot
 
         static int i;
 
-        
 
-        //Fill in        
-        public static int balance = 817;
+
+        //Fill in
+
+        public static int startBalance;
+        public static int currentBalance = startBalance;
 
         public static int greenLimit = 30;
         public static int redLimit = 5;
@@ -121,11 +123,11 @@ namespace GoDota2_Bot
 
             Start();
             BetCheck();
-            CheckStrike();            
-
-            Console.WriteLine("balance:" + balance);
+            CheckStrike();
+            BalanceDifference();
+            
         }
-
+        
         static void Start()
         {
             round++;
@@ -227,21 +229,21 @@ namespace GoDota2_Bot
         {
             if (bettingGreen == true && currentColor == "green")
             {
-                balance += addedPointsG * 14;
+                currentBalance += addedPointsG * 14;
                 bettingGreen = false;
                 lostPointsG = 0;
                 addedPointsG = 0;
             }
             else if (bettingRed == true && currentColor == "red")
             {
-                balance += addedPointsR * 2;
+                currentBalance += addedPointsR * 2;
                 bettingRed = false;
                 lostPointsR = 0;
                 addedPointsR = 0;
             }
             else if (bettingBlack == true && currentColor == "black")
             {
-                balance += addedPointsB * 2;
+                currentBalance += addedPointsB * 2;
                 bettingBlack = false;
                 lostPointsB = 0;
                 addedPointsB = 0;
@@ -360,7 +362,7 @@ namespace GoDota2_Bot
                 addedPoints++;
             }
 
-            balance -= addedPoints;
+            currentBalance -= addedPoints;
             lostPoints += addedPoints;
             StopChecker();
         }
@@ -429,7 +431,7 @@ namespace GoDota2_Bot
 
         static void StopChecker()
         {
-            if (balance < 0) { Console.ReadKey(); }
+            if (currentBalance < 0) { Console.ReadKey(); }
         }
 
         static void MathLogic()
@@ -446,6 +448,22 @@ namespace GoDota2_Bot
             blackProbab = Math.Round(blackProbab, 2);
             greenProbab = Math.Round(greenProbab, 2);
         }
+        static void BalanceDifference()
+        {
+            int differenceBalance = currentBalance - startBalance;
+            string plusOrMinus = "";
+            if (differenceBalance > 0)
+            {
+                plusOrMinus = "+";
+            }
+            else if (differenceBalance == 0)
+            {
+                Console.WriteLine($"balance: {currentBalance}");
+                return;
+            }
+
+            Console.WriteLine($"balance: {currentBalance}({plusOrMinus}{differenceBalance})");
+        }
 
 
 
@@ -453,7 +471,7 @@ namespace GoDota2_Bot
 
 
 
-        
+
 
 
         static Color GetColorAt(int x, int y)
