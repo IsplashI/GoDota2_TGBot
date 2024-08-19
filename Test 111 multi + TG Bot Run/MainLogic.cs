@@ -103,7 +103,7 @@ namespace GoDota2_Bot
 
         
 
-        //Fill in
+        //Fill in        
         public static int balance = 817;
 
         public static int greenLimit = 30;
@@ -139,7 +139,7 @@ namespace GoDota2_Bot
 
                 //SetCursorPos(x, y);
 
-                if (startColor.G == 17 && startColor.R == 15 && startColor.B == 23)
+                if (startColor.G == 17 && startColor.R == 16 && startColor.B == 23)
                 {
                     Console.WriteLine("Rounds:" + round);
 
@@ -331,101 +331,58 @@ namespace GoDota2_Bot
 
 
         static void ProfitCountGreen()
-        {
-            Console.WriteLine("profitCountGreen running...");
-
-            while (true)
-            {
-
-                profit = (addedPointsG * 14) - (lostPointsG + addedPointsG);
-
-
-                if (profit >= minProfitGreen)
-                {
-                    break;
-                }
-                addedPointsG++;
-            }
-
-            balance -= addedPointsG;
-            lostPointsG += addedPointsG;
-            StopChecker();
+        {            
+            ProfitCount("green", ref addedPointsG, ref lostPointsG, 14, minProfitGreen);
         }
 
         static void ProfitCountRed()
-        {
-            Console.WriteLine("profitCount red running...");
-
-            while (true)
-            {
-
-                profit = (addedPointsR * 2) - (lostPointsR + addedPointsR);
-
-
-                if (profit >= minProfitRed)
-                {
-                    break;
-                }
-                addedPointsR++;
-            }
-
-            balance -= addedPointsR;
-            lostPointsR += addedPointsR;
-            StopChecker();
+        {            
+            ProfitCount("red", ref addedPointsR, ref lostPointsR, 2, minProfitRed);
         }
 
         static void ProfitCountBlack()
+        {            
+            ProfitCount("black", ref addedPointsB, ref lostPointsB, 2, minProfitBlack);
+        }
+        
+        static void ProfitCount(string color, ref int addedPoints, ref int lostPoints, int multiplier, int minProfit)
         {
-            Console.WriteLine("profitCount black running...");
+            Console.WriteLine($"profitCount {color} running...");
 
             while (true)
             {
+                int profit = (addedPoints * multiplier) - (lostPoints + addedPoints);
 
-                profit = (addedPointsB * 2) - (lostPointsB + addedPointsB);
-
-
-                if (profit >= minProfitBlack)
+                if (profit >= minProfit)
                 {
                     break;
                 }
-                addedPointsB++;
+                addedPoints++;
             }
 
-            balance -= addedPointsB;
-            lostPointsB += addedPointsB;
+            balance -= addedPoints;
+            lostPoints += addedPoints;
             StopChecker();
         }
 
 
         static void SetPriceG()
         {
-
             Console.WriteLine("SetPriceG running...");
-
             AddPoints(addedPointsG);
-
-            Console.WriteLine("addedPointsG:" + addedPointsG);
-            
+            Console.WriteLine("addedPointsG:" + addedPointsG);           
         }
         static void SetPriceR()
         {
-
             Console.WriteLine("SetPrice red running...");
-
             AddPoints(addedPointsR);
-
             Console.WriteLine("added points red:" + addedPointsR);
-
         }
         static void SetPriceB()
         {
-
             Console.WriteLine("SetPrice black running...");
-
-            AddPoints(addedPointsB);
-                        
+            AddPoints(addedPointsB);                       
             Console.WriteLine("added points black:" + addedPointsB);
-
         }
         static void AddPoints(int points)
         {
