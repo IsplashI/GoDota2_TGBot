@@ -10,6 +10,7 @@ namespace GoDota2_Bot
             {
         new[] { new KeyboardButton("/start") },
         new[] { new KeyboardButton("/show_info") },
+        //new[] { new KeyboardButton("/capture_screen") },
         new[] { new KeyboardButton("/change_balance") },
         new[] { new KeyboardButton("/change_bet_limits") },
         new[] { new KeyboardButton("/change_min_profit") },
@@ -32,7 +33,7 @@ namespace GoDota2_Bot
                 OneTimeKeyboard = true
             };
         }
-        //not ready!!!
+        
         public static IReplyMarkup GetMinProfitButtons()
         {
             return new ReplyKeyboardMarkup(new[]

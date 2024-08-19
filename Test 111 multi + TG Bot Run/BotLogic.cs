@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics;
+using System.Drawing.Imaging;
+using System.Drawing;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using System.IO;
 
 
 
@@ -78,6 +81,9 @@ namespace GoDota2_Bot
                 case "/change_min_profit_black":
                     await ChangeMinProfitBlack_Command(client, update);
                     break;
+                case "/capture_screen":
+                    await CaptureScreen_Command(client, update);
+                    break;
                 case "/shutdown":
                     await Shutdown_Command(client, update);
                     break;
@@ -87,13 +93,10 @@ namespace GoDota2_Bot
             }
         }
 
-
-
-
-
+        
         private static async Task Start_Command(ITelegramBotClient client, Update update)
         {
-            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Welcome to my godota2 bot!!!\nYour chatId: ||{update.Message?.Chat.Id}||\n", replyMarkup: ReplyMarkups.GetDefaultButtons());
+            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Welcome to my godota2 bot!!!\nYour chatId: {update.Message?.Chat.Id}\n", replyMarkup: ReplyMarkups.GetDefaultButtons());
         }
         
         private static async Task ShowInfo_Command(ITelegramBotClient client, Update update)
@@ -197,6 +200,12 @@ namespace GoDota2_Bot
             await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Universal minimal profit:");
             waitingAllMinProfit = true;
         }
+        private static async Task CaptureScreen_Command(ITelegramBotClient client, Update update)
+        {
+            // for future
+            await Task.CompletedTask;
+        }
+        
 
         private static async Task Shutdown_Command(ITelegramBotClient client, Update update)
         {

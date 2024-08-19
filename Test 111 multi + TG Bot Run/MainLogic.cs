@@ -39,6 +39,12 @@ namespace GoDota2_Bot
         static int X1 = 1100;
         static int Y1 = 445;
 
+        static int X10 = 1180;
+        static int Y10 = 445;
+
+        static int X100 = 1250;
+        static int Y100 = 445;
+
         static int X2 = 700;
         static int Y2 = 536;
 
@@ -94,6 +100,8 @@ namespace GoDota2_Bot
         public static int round;
 
         static int i;
+
+        
 
         //Fill in
         public static int balance = 817;
@@ -200,10 +208,10 @@ namespace GoDota2_Bot
 
         }
         static void CheckStrike()
-        {            
+        {        
             if (notGreen >= greenLimit)
             {
-                BetGreen();
+                BetGreen();                
             }
             if (notRed >= redLimit)
             {
@@ -213,9 +221,6 @@ namespace GoDota2_Bot
             {
                 BetBlack();
             }
-
-            //fix 3-bet 
-
         }
 
         static void BetCheck()
@@ -397,34 +402,18 @@ namespace GoDota2_Bot
 
             Console.WriteLine("SetPriceG running...");
 
-            for (int i = 0; i < addedPointsG; i++)
-            {
+            AddPoints(addedPointsG);
 
-                SetCursorPos(X1, Y1);
-                // Виконуємо клік лівою кнопкою миші
-                mouse_event(MOUSEEVENTF_LEFTDOWN, X1, Y1, 0, 0);
-                mouse_event(MOUSEEVENTF_LEFTUP, X1, Y1, 0, 0);
-
-                Thread.Sleep(10);
-            }
             Console.WriteLine("addedPointsG:" + addedPointsG);
-            //Thread.Sleep(500);
+            
         }
         static void SetPriceR()
         {
 
             Console.WriteLine("SetPrice red running...");
 
-            for (int i = 0; i < addedPointsR; i++)
-            {
-                // Встановлюємо позицію курсора
-                SetCursorPos(X1, Y1);
-                // Виконуємо клік лівою кнопкою миші
-                mouse_event(MOUSEEVENTF_LEFTDOWN, X1, Y1, 0, 0);
-                mouse_event(MOUSEEVENTF_LEFTUP, X1, Y1, 0, 0);
+            AddPoints(addedPointsR);
 
-                Thread.Sleep(10);
-            }
             Console.WriteLine("added points red:" + addedPointsR);
 
         }
@@ -433,18 +422,41 @@ namespace GoDota2_Bot
 
             Console.WriteLine("SetPrice black running...");
 
-            for (int i = 0; i < addedPointsB; i++)
-            {
-                // Встановлюємо позицію курсора
-                SetCursorPos(X1, Y1);
-                // Виконуємо клік лівою кнопкою миші
-                mouse_event(MOUSEEVENTF_LEFTDOWN, X1, Y1, 0, 0);
-                mouse_event(MOUSEEVENTF_LEFTUP, X1, Y1, 0, 0);
-
-                Thread.Sleep(10);
-            }
+            AddPoints(addedPointsB);
+                        
             Console.WriteLine("added points black:" + addedPointsB);
 
+        }
+        static void AddPoints(int points)
+        {
+            while (points > 0)
+            {
+                if (points >= 100)
+                {
+                    SetCursorPos(X100, Y100);                    
+                    mouse_event(MOUSEEVENTF_LEFTDOWN, X100, Y100, 0, 0);
+                    mouse_event(MOUSEEVENTF_LEFTUP, X100, Y100, 0, 0);
+
+                    points -= 100;
+                }
+                else if (points >= 10)
+                {
+                    SetCursorPos(X10, Y10);
+                    mouse_event(MOUSEEVENTF_LEFTDOWN, X10, Y10, 0, 0);
+                    mouse_event(MOUSEEVENTF_LEFTUP, X10, Y10, 0, 0);
+
+                    points -= 10;  
+                }
+                else
+                {                   
+                    SetCursorPos(X1, Y1);
+                    mouse_event(MOUSEEVENTF_LEFTDOWN, X1, Y1, 0, 0);
+                    mouse_event(MOUSEEVENTF_LEFTUP, X1, Y1, 0, 0);
+
+                    points--; 
+                }                
+                Thread.Sleep(10);
+            }
         }
 
         static void Clear()
@@ -484,7 +496,7 @@ namespace GoDota2_Bot
 
 
 
-
+        
 
 
         static Color GetColorAt(int x, int y)
