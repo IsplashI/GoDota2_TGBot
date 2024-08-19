@@ -1,6 +1,5 @@
 ﻿using Telegram.Bot.Types;
 using Telegram.Bot;
-using GoDota2_Bot;
 
 namespace GoDota2_Bot
 {

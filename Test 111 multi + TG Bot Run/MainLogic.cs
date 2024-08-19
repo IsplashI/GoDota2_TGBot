@@ -448,21 +448,26 @@ namespace GoDota2_Bot
             blackProbab = Math.Round(blackProbab, 2);
             greenProbab = Math.Round(greenProbab, 2);
         }
-        static void BalanceDifference()
+        public static string BalanceDifference()
         {
             int differenceBalance = currentBalance - startBalance;
             string plusOrMinus = "";
+            string message = "";
             if (differenceBalance > 0)
             {
                 plusOrMinus = "+";
             }
             else if (differenceBalance == 0)
             {
-                Console.WriteLine($"balance: {currentBalance}");
-                return;
+                message = $"Balance: {currentBalance}";
             }
-
-            Console.WriteLine($"balance: {currentBalance}({plusOrMinus}{differenceBalance})");
+            else
+            {
+                message = $"Balance: {currentBalance}({plusOrMinus}{differenceBalance})";
+            }
+            
+            Console.WriteLine(message);
+            return message;
         }
 
 

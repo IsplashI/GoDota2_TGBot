@@ -1,9 +1,6 @@
 ﻿using System.Diagnostics;
-using System.Drawing.Imaging;
-using System.Drawing;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using System.IO;
 using Telegram.Bot.Types.ReplyMarkups;
 
 
@@ -31,8 +28,8 @@ namespace GoDota2_Bot
 
         public static void MainBot()
         {            
-            BotConfiguration botConfiguration = new BotConfiguration();    
-            
+            BotConfiguration botConfiguration = new BotConfiguration();
+
             Host g4bot = new Host(botConfiguration.botToken);
             g4bot.Start();
             g4bot.OnMessage += OnMessage;                       
@@ -109,9 +106,10 @@ namespace GoDota2_Bot
                 onBet = true;
             }
 
+            string balanceMessage = MainLogic.BalanceDifference();
 
-            string message1 = $"Round: {MainLogic.round}\n" +
-                $"Balance: {MainLogic.currentBalance}\n" +
+            string message = $"Round: {MainLogic.round}\n" +
+                $"{balanceMessage}\n" +                
                 $"Current color: {MainLogic.currentColor}\n" +
                 $"Bet: {onBet}\n" +
                 $"\n" +
@@ -124,7 +122,7 @@ namespace GoDota2_Bot
                 $"Green count {MainLogic.greenProbab}   {MainLogic.greenCount}";
 
 
-            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, message1);
+            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, message);
         }
         private static async Task Balance_Command(ITelegramBotClient client, Update update)
         {
