@@ -51,10 +51,10 @@ namespace GoDota2_Bot
                     await Balance_Command(client, update);
                     break;
                 case "/change_balance":
-                    await ChangeBalance_Command(client, update);
+                    await ChangeStartBalance_Command(client, update);
                     break;
                 case "/change_current_balance":
-                    await ChangeBalance_Command(client, update);
+                    await ChangeCurrentBalance_Command(client, update);
                     break;
                 case "/change_bet_limits":
                     await ChangeBetLimits_Command(client, update);
@@ -145,11 +145,11 @@ namespace GoDota2_Bot
             int currentBalance = MainLogic.currentBalance;
             await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, "Balance: " + currentBalance);
         }
-        private static async Task ChangeBalance_Command(ITelegramBotClient client, Update update)
+        private static async Task ChangeStartBalance_Command(ITelegramBotClient client, Update update)
         {
-            int currentBalance = MainLogic.currentBalance;
+            int startBalance = MainLogic.startBalance;
             await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId,
-                "Current start balance: " + currentBalance + "\nNew balance:", replyMarkup: new ReplyKeyboardRemove());
+                "Current start balance: " + startBalance + "\nNew balance:", replyMarkup: new ReplyKeyboardRemove());
             waitingBalance = true;
         }
 

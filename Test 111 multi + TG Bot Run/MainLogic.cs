@@ -106,7 +106,7 @@ namespace GoDota2_Bot
         //Fill in
 
         public static int startBalance;
-        public static int currentBalance = startBalance;
+        public static int currentBalance;
 
         public static int greenLimit = 30;
         public static int redLimit = 5;
