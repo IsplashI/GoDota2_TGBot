@@ -457,7 +457,7 @@ namespace GoDota2_Bot
             {
                 plusOrMinus = "+";
             }
-            else if (differenceBalance == 0)
+            if (differenceBalance == 0)
             {
                 message = $"Balance: {currentBalance}";
             }

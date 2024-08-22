@@ -14,6 +14,7 @@ namespace GoDota2_Bot
         }
         private async Task BalanceInputHandler(ITelegramBotClient client, Update update)
         {
+            
             if (BotLogic.waitingBalance == true)
             {
                 string messageText = update.Message?.Text ?? "not text";
@@ -21,13 +22,30 @@ namespace GoDota2_Bot
                 {
                     MainLogic.currentBalance = balance;
                     MainLogic.startBalance = balance;
-                    await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Succes!\nBalance:{balance}", replyMarkup: ReplyMarkups.GetDefaultButtons());
+                    string balanceMessage = MainLogic.BalanceDifference();
+                    await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Succes!\n{balanceMessage}", replyMarkup: ReplyMarkups.GetDefaultButtons());
                 }
                 else
                 {
                     await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Error!", replyMarkup: ReplyMarkups.GetDefaultButtons());
                 }
                 BotLogic.waitingBalance = false;
+            }
+
+            if (BotLogic.waitingCurrentBalance == true)
+            {
+                string messageText = update.Message?.Text ?? "not text";
+                if (int.TryParse(messageText, out int balance) && balance > 0)
+                {
+                    MainLogic.currentBalance = balance;
+                    string balanceMessage = MainLogic.BalanceDifference();
+                    await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Succes!\n{balanceMessage}", replyMarkup: ReplyMarkups.GetDefaultButtons());
+                }
+                else
+                {
+                    await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Error!", replyMarkup: ReplyMarkups.GetDefaultButtons());
+                }
+                BotLogic.waitingCurrentBalance = false;
             }
         }
         private async Task LimitInputHandler(ITelegramBotClient client, Update update)

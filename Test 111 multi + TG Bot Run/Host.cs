@@ -5,13 +5,21 @@ namespace GoDota2_Bot
 {
     public class Host
     {
-        
-        public Action<ITelegramBotClient, Update>? OnMessage;        
-        private TelegramBotClient _bot;        
-        public Host(string token) 
+
+        public Action<ITelegramBotClient, Update>? OnMessage;
+        private TelegramBotClient _bot;
+        public Host()
         {
-            BotConfiguration botConfiguration = new BotConfiguration();
-            _bot = new TelegramBotClient(token);
+            var botConfiguration = BotConfiguration.Configuration;
+            try
+            {
+                _bot = new TelegramBotClient(botConfiguration.botToken);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            
         }
         public void Start()
         {
@@ -22,12 +30,14 @@ namespace GoDota2_Bot
 
         public async Task OnlineMessage()
         {
-            if (BotConfiguration.chatId != 0)
+            BotConfiguration.Configuration = BotConfiguration.Read(BotConfiguration.ConfigFilePath);
+
+            foreach (var chatId in BotConfiguration.Configuration.chatIds)
             {
-                await _bot.SendTextMessageAsync(BotConfiguration.chatId, "online");
-            }                    
+                await _bot.SendTextMessageAsync(chatId, "online");
+            }            
         }
-              
+                  
         private async Task ErrorHandler(ITelegramBotClient client, Exception exception, CancellationToken token)
         {
             Console.WriteLine("Error:" + exception.Message);

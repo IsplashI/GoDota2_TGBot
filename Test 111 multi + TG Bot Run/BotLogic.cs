@@ -14,6 +14,7 @@ namespace GoDota2_Bot
         public static bool show1 = false;
 
         public static bool waitingBalance = false;
+        public static bool waitingCurrentBalance = false;
         public static bool waitingLimits = false;
         public static bool waitingGreenLimit = false;
         public static bool waitingRedLimit = false;
@@ -30,7 +31,7 @@ namespace GoDota2_Bot
         {            
             BotConfiguration botConfiguration = new BotConfiguration();
 
-            Host g4bot = new Host(botConfiguration.botToken);
+            Host g4bot = new Host();
             g4bot.Start();
             g4bot.OnMessage += OnMessage;                       
         }
@@ -50,6 +51,9 @@ namespace GoDota2_Bot
                     await Balance_Command(client, update);
                     break;
                 case "/change_balance":
+                    await ChangeBalance_Command(client, update);
+                    break;
+                case "/change_current_balance":
                     await ChangeBalance_Command(client, update);
                     break;
                 case "/change_bet_limits":
@@ -94,9 +98,21 @@ namespace GoDota2_Bot
         
         private static async Task Start_Command(ITelegramBotClient client, Update update)
         {
-            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Welcome to my godota2 bot!!!\nYour chatId: {update.Message?.Chat.Id}\n", replyMarkup: ReplyMarkups.GetDefaultButtons());
+            var chatId = GetChatId(update);
+            if (chatId > 0)
+            {
+                BotConfiguration.Configuration.chatIds.Add(chatId);
+                BotConfiguration.JsonToFile(BotConfiguration.Configuration, BotConfiguration.ConfigFilePath);
+                await client.SendTextMessageAsync(chatId, $"Welcome to my godota2 bot!!!\nYour chatId: {chatId}\n", replyMarkup: ReplyMarkups.GetDefaultButtons());
+            }                    
         }
-        
+
+        private static long GetChatId(Update update)
+        {
+            var chatId = update.Message?.Chat.Id ?? 0;            
+            return chatId;
+        }        
+
         private static async Task ShowInfo_Command(ITelegramBotClient client, Update update)
         {                       
             bool onBet = false;
@@ -133,8 +149,16 @@ namespace GoDota2_Bot
         {
             int currentBalance = MainLogic.currentBalance;
             await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId,
-                "Current balance: " + currentBalance + "\nNew balance:", replyMarkup: new ReplyKeyboardRemove());
+                "Current start balance: " + currentBalance + "\nNew balance:", replyMarkup: new ReplyKeyboardRemove());
             waitingBalance = true;
+        }
+
+        private static async Task ChangeCurrentBalance_Command(ITelegramBotClient client, Update update)
+        {
+            int currentBalance = MainLogic.currentBalance;
+            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId,
+                "Current balance: " + currentBalance + "\nNew current balance:", replyMarkup: new ReplyKeyboardRemove());
+            waitingCurrentBalance = true;
         }
 
 
