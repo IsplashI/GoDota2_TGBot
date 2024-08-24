@@ -3,11 +3,14 @@
     internal class Program
     {
         internal static void Main()
-        {                       
+        {
+            ConfigureZones configureZones = new ConfigureZones();
+            configureZones.Configure();
             BotLogic.MainBot();
             while (true)
             {
-                MainLogic.AutoBet();               
+                MainLogic mainLogic = new MainLogic();
+                mainLogic.AutoBet();               
             }
         }
     }

@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
+using Telegram.Bot.Types.InputFiles;
 
 
 
@@ -24,9 +26,7 @@ namespace GoDota2_Bot
         public static bool waitingRedMinProfit = false;
         public static bool waitingBlackMinProfit = false;
         public static bool waitingAllMinProfit = false;
-
-        //private static readonly string filePath = "chatId.txt";
-
+        
         public static void MainBot()
         {            
             BotConfiguration botConfiguration = new BotConfiguration();
@@ -225,7 +225,25 @@ namespace GoDota2_Bot
         }
         private static async Task CaptureScreen_Command(ITelegramBotClient client, Update update)
         {
-            // for future
+            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, "Capturing...");
+            ScreenCapture.CaptureScreen();
+            try
+            {
+                using (var stream = new FileStream(ScreenCapture.fileName, FileMode.Open))
+                {
+                    await client.SendPhotoAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, new InputOnlineFile(stream));
+                }
+            }
+            catch (ApiRequestException apiEx)
+            {                
+                Console.WriteLine($"Telegram API Error: {apiEx.Message}");
+                await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Telegram API Error: {apiEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while sending the screenshot: {ex.Message}");
+                await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"An error occurred while sending the screenshot: {ex.Message}");
+            }
             await Task.CompletedTask;
         }
         

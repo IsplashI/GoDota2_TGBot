@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Runtime.InteropServices;
+using static GoDota2_Bot.ConfigureZones;
 
 
 
@@ -27,32 +28,38 @@ namespace GoDota2_Bot
 
         static List<string> colorsHistory = new List<string>();
 
-        static int x = 1030;
-        static int y = 220;
+        Coordinates coordinates = new Coordinates();
 
-        static int x1 = 1413;
-        static int y1 = 365;
+        public static int x;
+        public static int y;
 
-        static int cl1 = 1010;
-        static int cl2 = 445;
+        public static int startColorR;
+        public static int startColorG;
+        public static int startColorB; 
 
-        static int X1 = 1100;
-        static int Y1 = 445;
+        public static int x1;
+        public static int y1;
 
-        static int X10 = 1180;
-        static int Y10 = 445;
+        public static int cl1;
+        public static int cl2;
 
-        static int X100 = 1250;
-        static int Y100 = 445;
+        public static int X1;
+        public static int Y1;
 
-        static int X2 = 700;
-        static int Y2 = 536;
+        public static int X10;
+        public static int Y10;
 
-        static int X3 = 1600;
-        static int Y3 = 536;
+        public static int X100;
+        public static int Y100;
 
-        static int X4 = 1200;
-        static int Y4 = 536;
+        public static int X2;
+        public static int Y2;
+
+        public static int X3;
+        public static int Y3;
+
+        public static int X4;
+        public static int Y4;
 
         static int addedPointsR = 0;
         static int addedPointsB = 0;
@@ -117,18 +124,19 @@ namespace GoDota2_Bot
         public static int minProfitBlack = 1;
 
 
-        public static void AutoBet()
+        public void AutoBet()
         {
+            
             Thread.Sleep(25000);
 
             Start();
-            BetCheck();
+            BetCheck();            
             CheckStrike();
             BalanceDifference();
             
         }
         
-        static void Start()
+        void Start()
         {
             round++;
             Console.WriteLine(" ");
@@ -137,11 +145,12 @@ namespace GoDota2_Bot
 
             while (true)
             {
+
                 Color startColor = GetColorAt(x, y);
 
                 //SetCursorPos(x, y);
-
-                if (startColor.G == 17 && startColor.R == 16 && startColor.B == 23)
+                
+                if (startColor.R == startColorR && startColor.G == startColorG && startColor.B == startColorB)
                 {
                     Console.WriteLine("Rounds:" + round);
 
