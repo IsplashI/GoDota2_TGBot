@@ -58,10 +58,22 @@ namespace GoDota2_Bot
         new[] { new KeyboardButton("/pause_betting") },       
         new[] { new KeyboardButton("/capture_screen") },
         new[] { new KeyboardButton("/get_system_info") },
+        new[] { new KeyboardButton("/get_software_info") },
+        new[] { new KeyboardButton("/shutdown_ask") },})
+            {
+                ResizeKeyboard = true
+            };
+        }
+        public static IReplyMarkup GetAcceptionButtons()
+        {
+            return new ReplyKeyboardMarkup(new[]
+            {
+        new[] { new KeyboardButton("/start") },
         new[] { new KeyboardButton("/shutdown_pc") },})
             {
                 ResizeKeyboard = true
             };
         }
+
     }
 }

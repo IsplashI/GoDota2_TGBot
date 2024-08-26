@@ -7,6 +7,7 @@ using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using OpenHardwareMonitor.Hardware;
 
 namespace GoDota2_Bot
 {
@@ -76,9 +77,39 @@ namespace GoDota2_Bot
             sb.AppendLine($"Logical CPU Cores: {Environment.ProcessorCount}");
             sb.AppendLine($"Physical CPU Cores: {GetPhysicalCpuCores()}");
 
+            // BIOS Information
+            sb.AppendLine($"BIOS Version: {GetBiosVersion()}");
+            sb.AppendLine($"BIOS Manufacturer: {GetBiosManufacturer()}");
+
+            // Graphics Card Information
+            GetGraphicsCardInfo(sb);
+
+            // GPU Usage
+            sb.AppendLine($"GPU Usage: {GetGpuUsage().ToString("F2")}%");
+
+            // Sound Device Information
+            GetSoundDeviceInfo(sb);
+
+            // Windows Update Status
+            sb.AppendLine($"Last Windows Update: {GetLastWindowsUpdate()}");
+
+            // Firewall Status
+            sb.AppendLine($"Firewall Enabled: {IsFirewallEnabled()}");
+
+            // Network Adapter Details
+            GetNetworkAdapterDetails(sb);
+
+            // CPU Core Utilization
+            GetCpuCoreUtilization(sb);
+
             // Network ping to a specific host
             var pingTime = GetNetworkPing("godota2.com");
             sb.AppendLine($"Ping to godota2.com: {pingTime} ms");
+
+            // Add resource usage of the current process
+            var (processCpuUsage, processMemoryUsage) = GetProcessResourceUsage();
+            sb.AppendLine($"Process CPU Usage: {processCpuUsage.ToString("F2")}%");
+            sb.AppendLine($"Process Memory Usage: {(processMemoryUsage / (1024.0 * 1024.0)).ToString("F2")} MB");
 
             return sb.ToString();
         }
@@ -101,6 +132,94 @@ namespace GoDota2_Bot
             return cpuCounter.NextValue();
         }
 
+        public static string GetBiosVersion()
+        {
+            try
+            {
+                var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_BIOS");
+                foreach (var obj in searcher.Get())
+                {
+                    return obj["SMBIOSBIOSVersion"].ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions or unsupported scenarios
+            }
+
+            return "Unknown";
+        }
+
+        public static string GetBiosManufacturer()
+        {
+            try
+            {
+                var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_BIOS");
+                foreach (var obj in searcher.Get())
+                {
+                    return obj["Manufacturer"].ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions or unsupported scenarios
+            }
+
+            return "Unknown";
+        }
+
+        public static void GetGraphicsCardInfo(StringBuilder sb)
+        {
+            try
+            {
+                var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_VideoController");
+                foreach (var obj in searcher.Get())
+                {
+                    sb.AppendLine($"Graphics Card: {obj["Name"]}");
+                    sb.AppendLine($"  Driver Version: {obj["DriverVersion"]}");
+                    sb.AppendLine($"  Status: {obj["Status"]}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions or unsupported scenarios
+            }
+        }
+
+        public static float GetGpuUsage()
+        {
+            try
+            {
+                var hardwareMonitor = new Computer
+                {
+                    GPUEnabled = true
+                };
+                hardwareMonitor.Open();
+
+                foreach (var hardware in hardwareMonitor.Hardware)
+                {
+                    if (hardware.HardwareType == HardwareType.GpuNvidia || hardware.HardwareType == HardwareType.GpuAti)
+                    {
+                        hardware.Update();
+
+                        foreach (var sensor in hardware.Sensors)
+                        {
+                            if (sensor.SensorType == SensorType.Load && sensor.Name == "GPU Core")
+                            {
+                                return sensor.Value.GetValueOrDefault();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions or unsupported scenarios
+            }
+
+            return 0.0f;
+        }
+
         public static float GetMemoryUsage()
         {
             var availableMemoryMb = new PerformanceCounter("Memory", "Available MBytes").NextValue();
@@ -114,6 +233,23 @@ namespace GoDota2_Bot
 
             var usedMemoryMb = committedMemoryBytes / (1024 * 1024);
             return (float)(usedMemoryMb / totalMemoryMb * 100);
+        }
+
+        public static void GetSoundDeviceInfo(StringBuilder sb)
+        {
+            try
+            {
+                var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_SoundDevice");
+                foreach (var obj in searcher.Get())
+                {
+                    sb.AppendLine($"Sound Device: {obj["Name"]}");
+                    sb.AppendLine($"  Status: {obj["Status"]}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions or unsupported scenarios
+            }
         }
 
         public static float GetDiskUsage()
@@ -279,6 +415,90 @@ namespace GoDota2_Bot
             {
                 return 0; // Return 0 if unable to determine physical cores
             }
+        }
+        public static string GetLastWindowsUpdate()
+        {
+            try
+            {
+                var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_QuickFixEngineering");
+                var updates = searcher.Get();
+
+                foreach (var obj in updates)
+                {
+                    return obj["InstalledOn"]?.ToString() ?? "Unknown";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions or unsupported scenarios
+            }
+
+            return "Unknown";
+        }
+
+        public static bool IsFirewallEnabled()
+        {
+            try
+            {
+                var searcher = new ManagementObjectSearcher(@"root\SecurityCenter2", "SELECT * FROM FirewallProduct");
+                foreach (var obj in searcher.Get())
+                {
+                    return Convert.ToBoolean(obj["Enabled"]);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions or unsupported scenarios
+            }
+
+            return false; // Default to false if not supported
+        }
+
+        public static void GetNetworkAdapterDetails(StringBuilder sb)
+        {
+            foreach (var nic in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                sb.AppendLine($"Network Adapter: {nic.Description}");
+                sb.AppendLine($"  MAC Address: {nic.GetPhysicalAddress()}");
+                sb.AppendLine($"  Speed: {nic.Speed / (1024 * 1024)} Mbps");
+                sb.AppendLine($"  Status: {nic.OperationalStatus}");
+                var ipProps = nic.GetIPProperties();
+                foreach (var ip in ipProps.UnicastAddresses)
+                {
+                    sb.AppendLine($"  IP Address: {ip.Address}");
+                }
+            }
+        }
+
+        public static void GetCpuCoreUtilization(StringBuilder sb)
+        {
+            try
+            {
+                int coreCount = Environment.ProcessorCount;
+                for (int i = 0; i < coreCount; i++)
+                {
+                    var coreUsage = new PerformanceCounter("Processor", "% Processor Time", i.ToString());
+                    coreUsage.NextValue();
+                    Thread.Sleep(1000);
+                    sb.AppendLine($"Core {i} Usage: {coreUsage.NextValue().ToString("F2")}%");
+                }
+            }
+            catch (Exception ex)
+            {
+                sb.AppendLine("CPU Core Utilization not available.");
+            }
+        }
+        public static (float CpuUsage, long MemoryUsage) GetProcessResourceUsage()
+        {
+            var process = Process.GetCurrentProcess();
+            var cpuCounter = new PerformanceCounter("Process", "% Processor Time", process.ProcessName, true);
+            cpuCounter.NextValue();
+            Thread.Sleep(1000); // Wait a second to get a real value
+            float cpuUsage = cpuCounter.NextValue();
+
+            long memoryUsage = process.WorkingSet64; // Memory usage in bytes
+
+            return (cpuUsage, memoryUsage);
         }
     }
 }

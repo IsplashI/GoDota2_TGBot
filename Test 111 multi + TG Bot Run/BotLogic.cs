@@ -26,7 +26,9 @@ namespace GoDota2_Bot
         public static bool waitingRedMinProfit = false;
         public static bool waitingBlackMinProfit = false;
         public static bool waitingAllMinProfit = false;
-        
+
+        public static bool waitingAcception = false;
+
         public static void MainBot()
         {            
             BotConfiguration botConfiguration = new BotConfiguration();
@@ -89,6 +91,9 @@ namespace GoDota2_Bot
                 case "/get_system_info":
                     await Get_System_Info_Command(client, update);
                     break;
+                case "/get_software_info":
+                    await Get_Software_Info_Command(client, update);
+                    break;
                 case "/pause_betting":
                     await PauseBetting_Command(client, update);
                     break;
@@ -97,6 +102,9 @@ namespace GoDota2_Bot
                     break;
                 case "/shutdown_pc":
                     await ShutdownPC_Command(client, update);
+                    break;
+                case "/shutdown_ask":
+                    await AskShutdownPC_Command(client, update);
                     break;
                 default:
                     await DefaultMessage_Command(client, update);
@@ -139,6 +147,32 @@ namespace GoDota2_Bot
             string metrics = SystemMetrics.CheckSystemMetrics();
             Console.WriteLine($"{metrics}");
             await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"{metrics}");       
+        }
+        private static async Task Get_Software_Info_Command(ITelegramBotClient client, Update update)
+        {
+            // Calling GetRunningProcesses directly from the SoftwareInfo class
+            string runningProcesses = SoftwareInfo.GetRunningProcesses();
+            Console.WriteLine("Running Processes:");
+            Console.WriteLine(runningProcesses);
+            //await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Running Processes:\n{runningProcesses}");
+            string filePath = "processes.txt";
+            System.IO.File.WriteAllText(filePath, runningProcesses);
+            using (var stream = System.IO.File.OpenRead(filePath))
+            {
+                await client.SendDocumentAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, new Telegram.Bot.Types.InputFiles.InputOnlineFile(stream, "processes.txt"));
+            }
+
+            // You can also call GetInstalledApplications independently
+            string installedApps = SoftwareInfo.GetInstalledApplications();
+            Console.WriteLine("Installed Applications:");
+            Console.WriteLine(installedApps);
+            //await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Installed Applications:\n{installedApps}");
+            string filePath1 = "installedApps.txt";
+            System.IO.File.WriteAllText(filePath1, installedApps);
+            using (var stream = System.IO.File.OpenRead(filePath1))
+            {
+                await client.SendDocumentAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, new Telegram.Bot.Types.InputFiles.InputOnlineFile(stream, "installedApps.txt"));
+            }
         }
 
         private static async Task Start_Command(ITelegramBotClient client, Update update)
@@ -292,10 +326,14 @@ namespace GoDota2_Bot
             }
             await Task.CompletedTask;
         }
-        
+
+        private static async Task AskShutdownPC_Command(ITelegramBotClient client, Update update)
+        {
+            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, "Turn off PC?", replyMarkup: ReplyMarkups.GetAcceptionButtons());           
+        }
 
         private static async Task ShutdownPC_Command(ITelegramBotClient client, Update update)
-        {
+        {            
             await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, "Turning off...");
 
             ProcessStartInfo processStartInfo = new ProcessStartInfo("shutdown", "/s /f /t 0")

@@ -11,7 +11,7 @@ namespace GoDota2_Bot
             await LimitInputHandler(client, update);
             await MinProfitInputHandler(client, update);
             await Task.CompletedTask;
-        }
+        }     
         private async Task BalanceInputHandler(ITelegramBotClient client, Update update)
         {
             
