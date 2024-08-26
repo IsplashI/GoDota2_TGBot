@@ -108,7 +108,7 @@ namespace GoDota2_Bot
 
         static int i;
 
-
+        public static bool pause = true;
 
         //Fill in
 
@@ -130,15 +130,15 @@ namespace GoDota2_Bot
             Thread.Sleep(25000);
 
             Start();
-            BetCheck();            
+            BetCheck();           
             CheckStrike();
             BalanceDifference();
             
         }
-        
+
         void Start()
         {
-            round++;
+            
             Console.WriteLine(" ");
             Console.WriteLine("Start running...");
             Thread.Sleep(10);
@@ -152,6 +152,7 @@ namespace GoDota2_Bot
                 
                 if (startColor.R == startColorR && startColor.G == startColorG && startColor.B == startColorB)
                 {
+                    round++;
                     Console.WriteLine("Rounds:" + round);
 
                     Thread.Sleep(10);
@@ -219,7 +220,11 @@ namespace GoDota2_Bot
 
         }
         static void CheckStrike()
-        {        
+        {    
+            if (!pause)
+            {
+                return;
+            }
             if (notGreen >= greenLimit)
             {
                 BetGreen();                

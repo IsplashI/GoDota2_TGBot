@@ -220,7 +220,7 @@ namespace GoDota2_Bot
 
             MainLogic.X2 = Config.X2;
             MainLogic.Y2 = Config.Y2;
-            MainLogic.X3 = Config.X2;
+            MainLogic.X3 = Config.X3;
             MainLogic.Y3 = Config.Y3;
             MainLogic.X4 = Config.X4;
             MainLogic.Y4 = Config.Y4;

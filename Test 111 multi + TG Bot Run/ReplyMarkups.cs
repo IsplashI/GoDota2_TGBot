@@ -10,11 +10,12 @@ namespace GoDota2_Bot
             {
         new[] { new KeyboardButton("/start") },
         new[] { new KeyboardButton("/show_info") },
-        new[] { new KeyboardButton("/capture_screen") },
         new[] { new KeyboardButton("/change_balance") },
         new[] { new KeyboardButton("/change_current_balance") },
         new[] { new KeyboardButton("/change_bet_limits") },
         new[] { new KeyboardButton("/change_min_profit") },
+        new[] { new KeyboardButton("/advanced_buttons") },
+
                     })
             {
                 ResizeKeyboard = true
@@ -47,6 +48,19 @@ namespace GoDota2_Bot
             {
                 ResizeKeyboard = true,
                 OneTimeKeyboard = true
+            };
+        }
+        public static IReplyMarkup GetAdvancedButtons()
+        {
+            return new ReplyKeyboardMarkup(new[]
+            {
+        new[] { new KeyboardButton("/start") },
+        new[] { new KeyboardButton("/pause_betting") },       
+        new[] { new KeyboardButton("/capture_screen") },
+        new[] { new KeyboardButton("/get_system_info") },
+        new[] { new KeyboardButton("/shutdown_pc") },})
+            {
+                ResizeKeyboard = true
             };
         }
     }

