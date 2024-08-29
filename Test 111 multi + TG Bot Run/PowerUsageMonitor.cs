@@ -113,10 +113,10 @@ public class PowerUsageMonitor : IDisposable
                         // Оновлення даних сенсора
                         _sensorData[sensor].Sum += sensor.Value.Value;
                         _sensorData[sensor].Count++;
-                    }
 
-                    // Використовуємо середнє значення сенсора
-                    if (_sensorData.TryGetValue(sensor, out SensorData data) && data.Count > 0)
+                        totalPower += sensor.Value.Value;
+                    }
+                    else if (_sensorData.TryGetValue(sensor, out SensorData data) && data.Count > 0)
                     {
                         totalPower += data.Sum / data.Count;
                     }
