@@ -4,6 +4,7 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using Telegram.Bot.Types.InputFiles;
+using System.Threading;
 
 
 
@@ -94,6 +95,9 @@ namespace GoDota2_Bot
                 case "/get_software_info":
                     await Get_Software_Info_Command(client, update);
                     break;
+                case "/get_power_usage":
+                    await GetPowerUsage_Command(client, update);
+                    break;
                 case "/pause_betting":
                     await PauseBetting_Command(client, update);
                     break;
@@ -110,6 +114,11 @@ namespace GoDota2_Bot
                     await DefaultMessage_Command(client, update);
                     break;
             }
+        }
+
+        private static async Task GetPowerUsage_Command(ITelegramBotClient client, Update update)
+        {
+            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, PowerUsageMonitor.GetPowerUsageString()); 
         }
 
         private static async Task AdvancedButtons_Command(ITelegramBotClient client, Update update)

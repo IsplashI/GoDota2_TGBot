@@ -59,6 +59,7 @@ namespace GoDota2_Bot
         new[] { new KeyboardButton("/capture_screen") },
         new[] { new KeyboardButton("/get_system_info") },
         new[] { new KeyboardButton("/get_software_info") },
+        new[] { new KeyboardButton("/get_power_usage") },
         new[] { new KeyboardButton("/shutdown_ask") },})
             {
                 ResizeKeyboard = true

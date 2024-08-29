@@ -23,9 +23,16 @@ namespace GoDota2_Bot
         }
         public void Start()
         {
-            _bot.StartReceiving(UpdateHandler, ErrorHandler);
-            OnlineMessage().Wait();
-            Console.WriteLine("online");
+            try
+            {
+                _bot.StartReceiving(UpdateHandler, ErrorHandler);
+                OnlineMessage().Wait();
+                Console.WriteLine("online");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }            
         }
 
         public async Task OnlineMessage()

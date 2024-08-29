@@ -225,18 +225,64 @@ namespace GoDota2_Bot
             {
                 return;
             }
-            if (notGreen >= greenLimit)
+            int betCount = 0; 
+            if (notGreen >= greenLimit && betCount < 2)
             {
-                BetGreen();                
+                BetGreen();
+                betCount++; 
             }
-            if (notRed >= redLimit)
+            if (notRed >= redLimit && notBlack >= blackLimit)
             {
-                BetRed();
+                CountComparison();
             }
-            if (notBlack >= blackLimit)
+            else
+            {
+                if (notRed >= redLimit && betCount < 2)
+                {
+                    BetRed();
+                    betCount++;
+                }
+                if (notBlack >= blackLimit && betCount < 2)
+                {
+                    BetBlack();
+                    betCount++;
+                }
+            }
+        }
+        public static void CountComparison()
+        {
+            if(bettingBlack)
             {
                 BetBlack();
             }
+            else if (bettingRed)
+            {
+                BetRed();
+            }
+            else
+            {
+                if (redCount > blackCount)
+                {
+                    BetBlack();
+                }
+                else if (blackCount > redCount)
+                {
+                    BetRed();
+                }
+                else
+                {
+                    Random random = new Random();
+                    int randomChoice = random.Next(1, 3);
+                    if (randomChoice == 1)
+                    {
+                        BetRed();
+                    }
+                    else
+                    {
+                        BetBlack();
+                    }
+                }
+            }            
         }
 
         static void BetCheck()
