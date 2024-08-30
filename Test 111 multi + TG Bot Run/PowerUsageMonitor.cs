@@ -105,6 +105,7 @@ public class PowerUsageMonitor : IDisposable
                 {
                     if (sensor.Value.HasValue)
                     {
+
                         if (!_sensorData.ContainsKey(sensor))
                         {
                             _sensorData[sensor] = new SensorData();
@@ -116,7 +117,7 @@ public class PowerUsageMonitor : IDisposable
 
                         totalPower += sensor.Value.Value;
                     }
-                    else if (_sensorData.TryGetValue(sensor, out SensorData data) && data.Count > 0)
+                    if (_sensorData.TryGetValue(sensor, out SensorData data) && data.Count > 0 && sensor.Value.Value == 0)
                     {
                         totalPower += data.Sum / data.Count;
                     }
