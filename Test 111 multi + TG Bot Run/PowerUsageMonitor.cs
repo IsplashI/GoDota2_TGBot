@@ -103,9 +103,8 @@ public class PowerUsageMonitor : IDisposable
             {
                 if (sensor.SensorType == SensorType.Power)
                 {
-                    if (sensor.Value.HasValue)
+                    if (sensor.Value.HasValue && sensor.Value.Value != 0)
                     {
-
                         if (!_sensorData.ContainsKey(sensor))
                         {
                             _sensorData[sensor] = new SensorData();
@@ -117,7 +116,7 @@ public class PowerUsageMonitor : IDisposable
 
                         totalPower += sensor.Value.Value;
                     }
-                    if (_sensorData.TryGetValue(sensor, out SensorData data) && data.Count > 0 && sensor.Value.Value == 0)
+                    else if (_sensorData.TryGetValue(sensor, out SensorData data) && data.Count > 0 && sensor.Value.Value == 0)
                     {
                         totalPower += data.Sum / data.Count;
                     }
@@ -186,13 +185,17 @@ public class PowerUsageMonitor : IDisposable
     {
         
         var sensorInfo = Instance.GetSensorInformation();
-        Console.WriteLine("Detected Sensors:");
+        string message = "Detected Sensors:\n";
         foreach (var info in sensorInfo)
         {
-            Console.WriteLine(info);
+            message += info + "\n";
         }
+
+        // Now you can print or use the message variable
+        Console.WriteLine(message);
+
         Instance.UpdatePowerUsage();
-        return $"{Instance.GetCurrentPowerUsage()}\n{Instance.GetTotalEnergyUsed()}";
+        return $"{message}\n{Instance.GetCurrentPowerUsage()}\n{Instance.GetTotalEnergyUsed()}";
     }
     private class SensorData
     {
