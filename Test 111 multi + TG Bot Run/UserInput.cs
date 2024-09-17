@@ -146,7 +146,7 @@ namespace GoDota2_Bot
                 {
                     await client.SendTextMessageAsync(update.Message?.Chat.Id ?? BotConfiguration.chatId, $"Error!", replyMarkup: ReplyMarkups.GetDefaultButtons());
                 }
-                BotLogic.waitingRedLimit = false;
+                BotLogic.waitingRedMinProfit = false;
             }
 
             if (BotLogic.waitingBlackMinProfit == true)

@@ -108,7 +108,7 @@ namespace GoDota2_Bot
 
         static int i;
 
-        public static bool pause = true;
+        public static bool pause = false;
 
         //Fill in
 
